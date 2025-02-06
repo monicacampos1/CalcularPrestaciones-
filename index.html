@@ -183,9 +183,9 @@
     const apellido = document.getElementById('apellido').value.trim();
     const sueldo = parseFloat(document.getElementById('sueldoBase').value) || 0;
             
-            if (sueldo <= 0) {
-                alert("Por favor ingrese un sueldo válido.");
-                return;
+    if (!nombre || !apellido || isNaN(sueldo) || sueldo <= 0) {
+            alert("Por favor, complete todos los campos con valores válidos.");
+            return;
             }
 
             let isss = sueldo >= 1000 ? 30 : sueldo * 0.03;
