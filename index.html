@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Sueldos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5fff8;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #000000;
+        }
+        .descripcion {
+            color: #000000;
+            font-size: 18px;
+            max-width: 800px;
+            margin: auto;
+        }
+        .container {
+            background: rgb(156, 199, 169);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(138, 132, 132, 0.979);
+            width: 90%;
+            max-width: 850px;
+            margin: auto;
+        }
+        .input-section {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            flex: 1;
+            min-width: 220px;
+            text-align: left;
+            margin: 10px;
+        }
+        label {
+            font-weight: bold;
+            color: #000000;
+            display: block;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #000000;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            outline: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid black;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #94eedd;
+            color: rgb(0, 0, 0);
+        }
+        .small-table {
+            width: 60%;
+            margin: 20px auto;
+        }
+        .button {
+            padding: 12px 20px;
+            background-color: #94eedd;
+            color: rgb(0, 0, 0);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            border: 1px solid black;
+            transition: background 0.3s ease;
+        }
+        .button:hover {
+            background-color: #ffffff;
+        }
+        .sueldo-neto-mensaje {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bienvenido a la Calculadora de Sueldos</h1>
+    <p class="descripcion">
+        Esta herramienta te ayuda a calcular tu sueldo neto después de aplicar descuentos de AFP, ISSS e ISR. 
+        Ingresa tu sueldo base y obtén el detalle de tus retenciones y el salario que recibirás.
+    </p>
+    <h1>                               </h1>
+    <h1>                               </h1>
+    <h1>                               </h1>
+
+    <div class="container">
+        <div class="input-section">
+            <div class="input-group">
+                <label>Nombre</label>
+                <input type="text" id="nombre" placeholder="Nombre">
+            </div>
+            <div class="input-group">
+                <label>Apellido</label>
+                <input type="text" id="apellido" placeholder="Apellido">
+            </div>
+            <div class="input-group">
+                <label>Sueldo Base</label>
+                <input type="number" id="sueldoBase" placeholder="Sueldo Base">
+            </div>
+        </div>
+
+        <!-- Primera Tabla: Detalles de Retenciones -->
+        <table>
+            <thead>
+                <tr>
+                    <th>AFP</th>
+                    <th>ISSS</th>
+                    <th>Renta Imponible</th>
+                    <th>ISR</th>
+                    <th>Total retenciones</th>
+                    <th>Sueldo Neto</th>
+                    <th>ISSS Patronal</th>
+                    <th>AFP Patronal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="resultado-afp">-</td>
+                    <td id="resultado-isss">-</td>
+                    <td id="resultado-rentaI">-</td>
+                    <td id="resultado-isr">-</td>
+                    <td id="resultado-retenciones">-</td>
+                    <td id="resultado-sueldo-neto">-</td>
+                    <td id="resultado-isssPatronal">-</td>
+                    <td id="resultado-afpPatronal">-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Segunda Tabla: Totales ISSS y AFP -->
+        <h3>Total ISSS y AFP (Empleado + Patronal)</h3>
+        <table class="small-table">
+            <thead>
+                <tr>
+                    <th>Total ISSS (Empleado + Patronal)</th>
+                    <th>Total AFP (Empleado + Patronal) </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="resultado-total-isss">-</td>
+                    <td id="resultado-total-afp">-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="button" onclick="calcularSueldo()">Calcular Sueldo Neto</button>
+        <button class="button" onclick="limpiarCampos()">Limpiar</button>
+        <div class="sueldo-neto-mensaje" id="mensajeSueldo"></div>
+    </div>
+
+    <script>
+        function calcularSueldo() {
+            const nombre = document.getElementById('nombre').value.trim();
+    const apellido = document.getElementById('apellido').value.trim();
+    const sueldo = parseFloat(document.getElementById('sueldoBase').value) || 0;
+            
+            if (sueldo <= 0) {
+                alert("Por favor ingrese un sueldo válido.");
+                return;
+            }
+
+            let isss = sueldo >= 1000 ? 30 : sueldo * 0.03;
+            const afp = sueldo * 0.0725;
+            const rentaI = sueldo - isss - afp;
+
+            let isr = 0;
+            if (rentaI > 2038.10) isr = ((rentaI - 2038.10) * 0.30) + 288.57;
+            else if (rentaI > 895.24) isr = ((rentaI - 895.24) * 0.20) + 60;
+            else if (rentaI > 472.00) isr = ((rentaI - 472.00) * 0.10) + 17.67;
+
+            const retenciones = isr + isss + afp;
+            const sueldoNeto = rentaI - isr;
+            const isssPatronal = sueldo * 0.075;
+            const afpPatronal = sueldo * 0.0875;
+            const totalIsss = isss + isssPatronal;
+            const totalAfp = afp + afpPatronal;
+
+            document.getElementById('resultado-afp').textContent = `$${afp.toFixed(2)}`;
+            document.getElementById('resultado-isss').textContent = `$${isss.toFixed(2)}`;
+            document.getElementById('resultado-rentaI').textContent = `$${rentaI.toFixed(2)}`;
+            document.getElementById('resultado-isr').textContent = `$${isr.toFixed(2)}`;
+            document.getElementById('resultado-retenciones').textContent = `$${retenciones.toFixed(2)}`;
+            document.getElementById('resultado-sueldo-neto').textContent = `$${sueldoNeto.toFixed(2)}`;
+            document.getElementById('resultado-isssPatronal').textContent = `$${isssPatronal.toFixed(2)}`;
+            document.getElementById('resultado-afpPatronal').textContent = `$${afpPatronal.toFixed(2)}`;
+            document.getElementById('resultado-total-isss').textContent = `$${totalIsss.toFixed(2)}`;
+            document.getElementById('resultado-total-afp').textContent = `$${totalAfp.toFixed(2)}`;
+
+            document.getElementById('resultado-sueldo-neto').textContent = `$${sueldoNeto.toFixed(2)}`;
+            document.getElementById('mensajeSueldo').textContent = `El sueldo neto de ${nombre} ${apellido} es: $${sueldoNeto.toFixed(2)}`;
+
+        }
+
+        function limpiarCampos() {
+            document.querySelectorAll("input").forEach(el => el.value = "");
+            document.querySelectorAll("td").forEach(el => el.textContent = "-");
+            document.getElementById('mensajeSueldo').textContent = ""; // Borra el mensaje del sueldo neto
+        }
+    </script>
+</body>
+</html>
